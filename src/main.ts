@@ -76,6 +76,8 @@ async function bootstrap() {
     .addCookieAuth('refreshToken')
     .addTag('System', "system health")
     .addTag('Departments', 'Department for managing  and their related information.')
+    .addTag('Positions', 'Positions for managing  and their related information.')
+    .addTag('')
 
     .build();
 

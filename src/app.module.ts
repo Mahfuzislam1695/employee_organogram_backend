@@ -1,11 +1,17 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { LoggerModule } from './common/logger/logger.module';
-import { HealthModule } from './health/health.module';
-import { DepartmentModule } from './modules/department/department.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { LoggerModule } from "./common/logger/logger.module";
+import { HealthModule } from "./health/health.module";
+import { DepartmentModule } from "./modules/department/department.module";
+import { PositionsModule } from "./modules/position/position.module";
+import { EmployeesModule } from "./modules/employee/employee.module";
+import { UserModule } from "./modules/user/user.module";
+import { RoleModule } from "./modules/role/role.module";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+
+
 
 @Module({
   imports: [
@@ -21,6 +27,10 @@ import { DepartmentModule } from './modules/department/department.module';
     LoggerModule,
     HealthModule,
     DepartmentModule,
+    PositionsModule,
+    // EmployeesModule,
+    // UserModule,
+    // RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
