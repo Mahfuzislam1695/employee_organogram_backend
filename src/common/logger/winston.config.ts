@@ -1,20 +1,19 @@
 import * as winston from 'winston';
-import * as DailyRotateFile from 'winston-daily-rotate-file';
+import DailyRotateFile = require('winston-daily-rotate-file');
 
-const logFormat = winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json(),
+const { combine, timestamp, errors, json, colorize, simple } = winston.format;
+
+const logFormat = combine(
+    timestamp(),
+    errors({ stack: true }),
+    json(),
 );
 
 export const winstonConfig = {
     transports: [
         new winston.transports.Console({
             level: 'debug',
-            format: winston.format.combine(
-                logFormat,
-                winston.format.colorize({ all: true }),
-            ),
+            format: combine(colorize({ all: true }), simple()),
         }),
         new DailyRotateFile({
             filename: 'logs/application-%DATE%.log',
@@ -27,3 +26,5 @@ export const winstonConfig = {
         }),
     ],
 };
+
+
