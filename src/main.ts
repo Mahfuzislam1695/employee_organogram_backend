@@ -8,16 +8,11 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
-// import { winstonConfig } from './common/logger/winston.config';
+import { winstonConfig } from './common/logger/winston.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    // logger: WinstonModule.createLogger(winstonConfig),
-  });
-
-  // Add this early in your bootstrap
-  app.getHttpAdapter().get('/favicon.ico', (req, res) => {
-    res.status(204).end();
+    logger: WinstonModule.createLogger(winstonConfig),
   });
 
   const configService = app.get(ConfigService);
@@ -79,7 +74,8 @@ async function bootstrap() {
       'JWT-auth',
     )
     .addCookieAuth('refreshToken')
-    .addTag('Department', 'Department for managing and their related information.')
+    .addTag('System', "system health")
+    .addTag('Departments', 'Department for managing  and their related information.')
 
     .build();
 
