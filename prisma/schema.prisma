@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id               Int         @id @default(autoincrement())
+  employeeId       String      @unique @db.VarChar(50)
+  firstName        String      @db.VarChar(100)
+  lastName         String      @db.VarChar(100)
+  fullName         String      @db.VarChar(201) // Virtual field: firstName + " " + lastName
+  email            String      @unique @db.VarChar(255)
+  phone            String?     @db.VarChar(20)
+  positionId       Int
+  position         Position    @relation(fields: [positionId], references: [id])
+  managerId        Int?
+  manager          Employee?   @relation("EmployeeHierarchy", fields: [managerId], references: [id])
+  subordinates     Employee[]  @relation("EmployeeHierarchy")
+  path             String      @default("") @map("org_path") @db.VarChar(255)
+  isActive         Boolean     @default(true)
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime    @updatedAt @map("updated_at")
+  deletedAt        DateTime?   @map("deleted_at")
+  departmentId     Int?
+  department       Department? @relation("DepartmentEmployees", fields: [departmentId], references: [id])
+  headOfDepartment Department? @relation("DepartmentHead")
+  metadata         Json?
+  user             User?       @relation(fields: [userId], references: [id])
+  userId           Int?        @unique
+  hierarchyLevel   Int         @default(1) // Calculated from path
+
+  @@index([managerId], name: "employee_manager_idx")
+  @@index([positionId], name: "employee_position_idx")
+  @@index([departmentId], name: "employee_department_idx")
+  @@index([isActive], name: "employee_status_idx")
+  @@index([email, isActive], name: "employee_email_status_idx")
+  @@index([path], name: "employee_path_idx")
+  @@index([userId], name: "employee_user_idx")
+  @@index([hierarchyLevel], name: "employee_level_idx")
+  @@map("employees")
+}
+
+model Position {
+  id          Int        @id @default(autoincrement())
+  title       String     @unique @db.VarChar(100)
+  level       Int        @default(1)
+  parentId    Int?
+  parent      Position?  @relation("PositionHierarchy", fields: [parentId], references: [id])
+  children    Position[] @relation("PositionHierarchy")
+  description String?    @db.Text
+  isExecutive Boolean    @default(false)
+  employees   Employee[]
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@index([level], name: "position_level_idx")
+  @@index([parentId], name: "position_parent_idx")
+  @@map("positions")
+}
+
+model Department {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique @db.VarChar(100)
+  code        String     @unique @db.VarChar(20)
+  description String?    @db.Text
+  headId      Int?       @unique
+  head        Employee?  @relation("DepartmentHead", fields: [headId], references: [id])
+  employees   Employee[] @relation("DepartmentEmployees")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  costCenter  String?    @db.VarChar(20)
+  location    String?    @db.VarChar(50)
+
+  @@index([headId], name: "department_head_idx")
+  @@index([code], name: "department_code_idx")
+  @@index([name], name: "department_name_idx")
+  @@map("departments")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  username   String     @unique @db.VarChar(50)
+  password   String     @db.VarChar(255)
+  email      String     @unique @db.VarChar(255)
+  employee   Employee?
+  employeeId Int?
+  roles      Role[]
+  isActive   Boolean    @default(true)
+  lastLogin  DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  AuditLog   AuditLog[]
+  ApiToken   ApiToken[]
+
+  @@index([employeeId])
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(50)
+  description String?  @db.Text
+  users       User[]
+  permissions Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  action     String   @db.VarChar(50)
+  entityType String   @db.VarChar(50)
+  entityId   Int?
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+  oldData    Json?
+  newData    Json?
+  ipAddress  String?  @db.VarChar(50)
+  userAgent  String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model ApiToken {
+  id           Int      @id @default(autoincrement())
+  token        String   @unique @db.VarChar(255)
+  refreshToken String?  @db.VarChar(255)
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int
+  expiresAt    DateTime
+  isActive     Boolean  @default(true)
+  description  String?  @db.VarChar(255)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([isActive])
+}
