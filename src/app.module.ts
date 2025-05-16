@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { LoggerModule } from './common/logger/logger.module';
+// import { LoggerModule } from './common/logger/logger.module';
 import { HealthModule } from './health/health.module';
 
 @Module({
@@ -17,7 +17,7 @@ import { HealthModule } from './health/health.module';
       ttl: 60,      // Reset counter after 60 seconds
       limit: 100,   // Allow 100 requests per IP in 60s
     }]),
-    LoggerModule,
+    // LoggerModule,
     HealthModule,
   ],
   controllers: [AppController],

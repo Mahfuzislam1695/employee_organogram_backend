@@ -8,11 +8,11 @@ import { ResponseInterceptor } from './common/interceptors/response.interceptor'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { WinstonModule } from 'nest-winston';
-import { winstonConfig } from './common/logger/winston.config';
+// import { winstonConfig } from './common/logger/winston.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger(winstonConfig),
+    // logger: WinstonModule.createLogger(winstonConfig),
   });
 
   const configService = app.get(ConfigService);
