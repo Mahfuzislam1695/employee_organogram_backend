@@ -15,6 +15,11 @@ async function bootstrap() {
     // logger: WinstonModule.createLogger(winstonConfig),
   });
 
+  // Add this early in your bootstrap
+  app.getHttpAdapter().get('/favicon.ico', (req, res) => {
+    res.status(204).end();
+  });
+
   const configService = app.get(ConfigService);
 
   // Security
