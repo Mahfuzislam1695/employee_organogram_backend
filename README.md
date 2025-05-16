@@ -44,6 +44,24 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+# Employee Organogram API
+
+## Assessment Solution
+
+### Features
+1. JWT-authenticated API endpoints
+2. Employee hierarchy traversal
+3. Swagger documentation
+
+### API Endpoints
+- `GET /api/v1/employees/:id/subordinates` - Get all subordinates
+- `POST /api/v1/auth/login` - Get JWT token
+
+### Setup
+```bash
+yarn install
+yarn run start
+
 ## Run tests
 
 ```bash

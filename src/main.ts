@@ -27,17 +27,6 @@ async function bootstrap() {
     credentials: true, // Allow credentials
   });
 
-  // for production, you can set the origin to a specific domain
-  // app.enableCors({
-  //   origin: configService.get('ALLOWED_ORIGINS').split(','),
-  //   credentials: true,
-  // });
-  // app.enableCors({
-  //   origin: ['https://yourdomain.com', 'https://admin.yourdomain.com'],
-  //   credentials: true,
-  // });
-  // app.use(cookieParser(configService.get('COOKIE_SECRET')));
-
   // Use cookie-parser middleware
   app.use(cookieParser());
 
@@ -56,10 +45,6 @@ async function bootstrap() {
   // Set the global prefix
   app.setGlobalPrefix('employee_organogram/api/v1');
 
-
-
-
-
   // Global response interceptor
   app.useGlobalInterceptors(new ResponseInterceptor());
 
@@ -74,8 +59,8 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('employee_organogram API')
-    .setDescription(`API documentation for employee_organogram Backend`)
+    .setTitle('Employee Organogram API')
+    .setDescription('API for employee hierarchy management')
     .setVersion('1.0.0')
     .addBearerAuth(
       {
@@ -86,10 +71,10 @@ async function bootstrap() {
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth', // This name must match the one used in @ApiBearerAuth() in your controllers
+      'JWT-auth',
     )
     .addCookieAuth('refreshToken')
-    .addTag('Stakeholders', 'Endpoints for managing stakeholders and their related information.')
+    .addTag('Department', 'Department for managing and their related information.')
 
     .build();
 
