@@ -17,7 +17,6 @@ import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AssignRoleDto } from './dto/assign-role.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -118,31 +117,4 @@ export class UserController {
     }
   }
 
-  @Post(':id/roles')
-  @ApiOperation({ summary: 'Assign roles to user' })
-  @ApiResponse({ status: 200, type: User })
-  async assignRoles(
-    @Param('id') id: string,
-    @Body() assignRoleDto: AssignRoleDto,
-    @Res() res: Response,
-  ) {
-    try {
-      const user = await this.service.assignRoles(+id, assignRoleDto);
-      sendResponse(res, {
-        statusCode: HttpStatus.OK,
-        success: true,
-        message: 'Roles assigned successfully',
-        data: user,
-      });
-    } catch (error) {
-      const statusCode = error instanceof NotFoundException
-        ? HttpStatus.NOT_FOUND
-        : HttpStatus.INTERNAL_SERVER_ERROR;
-      sendResponse(res, {
-        statusCode,
-        success: false,
-        message: error.message,
-      });
-    }
-  }
 }

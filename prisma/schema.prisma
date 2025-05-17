@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+  HR
+  FINANCE
+  IT
+  GUEST
+}
+
 model Employee {
   id               Int         @id @default(autoincrement())
   employeeId       String      @unique @db.VarChar(50)
@@ -88,7 +98,7 @@ model User {
   email      String     @unique @db.VarChar(255)
   employee   Employee?
   employeeId Int?
-  roles      Role[]
+  roles      Role[]     @default([EMPLOYEE])
   isActive   Boolean    @default(true)
   lastLogin  DateTime?
   createdAt  DateTime   @default(now())
@@ -97,16 +107,6 @@ model User {
   ApiToken   ApiToken[]
 
   @@index([employeeId])
-}
-
-model Role {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(50)
-  description String?  @db.Text
-  users       User[]
-  permissions Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 model AuditLog {

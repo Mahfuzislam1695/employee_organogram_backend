@@ -6,10 +6,12 @@ import { EmployeeController } from './employee.controller';
 import { PositionsModule } from '../position/position.module';
 import { DepartmentModule } from '../department/department.module';
 import { UserModule } from '../user/user.module';
+import { AuthModule } from '../auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
-  imports: [DepartmentModule, PositionsModule],
+  imports: [DepartmentModule, PositionsModule, AuthModule, JwtModule.register({})],
   // imports: [DepartmentModule, PositionsModule, UserModule],
 
   controllers: [EmployeeController],

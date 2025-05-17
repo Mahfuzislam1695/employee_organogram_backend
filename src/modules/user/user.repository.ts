@@ -10,7 +10,6 @@ export class UserRepository {
 
     private includeRelations = {
         employee: true,
-        roles: true,
     };
 
     async create(data: Prisma.UserCreateInput) {
@@ -29,25 +28,13 @@ export class UserRepository {
         try {
             return await this.prisma.user.findMany({
                 include: this.includeRelations,
+                orderBy: { createdAt: 'desc' },
             });
         } catch (error) {
             this.logger.error(`Failed to retrieve users: ${error.message}`);
             throw error;
         }
     }
-
-    //     async findAll(pagination?: { skip?: number; take?: number }) {
-    //   try {
-    //     return await this.prisma.user.findMany({
-    //       skip: pagination?.skip,
-    //       take: pagination?.take,
-    //       include: this.includeRelations,
-    //     });
-    //   } catch (error) {
-    //     this.logger.error(`Failed to retrieve users: ${error.message}`);
-    //     throw error;
-    //   }
-    // }
 
     async findById(id: number) {
         try {
@@ -82,23 +69,6 @@ export class UserRepository {
             });
         } catch (error) {
             this.logger.error(`Failed to update user ${id}: ${error.message}`);
-            throw error;
-        }
-    }
-
-    async assignRoles(userId: number, roleIds: number[]) {
-        try {
-            return await this.prisma.user.update({
-                where: { id: userId },
-                data: {
-                    roles: {
-                        set: roleIds.map(id => ({ id })),
-                    },
-                },
-                include: this.includeRelations,
-            });
-        } catch (error) {
-            this.logger.error(`Failed to assign roles: ${error.message}`);
             throw error;
         }
     }

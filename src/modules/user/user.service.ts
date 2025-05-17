@@ -3,9 +3,7 @@ import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Prisma } from '@prisma/client';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AssignRoleDto } from './dto/assign-role.dto';
 import * as bcrypt from 'bcrypt';
-
 
 @Injectable()
 export class UserService {
@@ -19,6 +17,7 @@ export class UserService {
       email: createUserDto.email,
       password: hashedPassword,
       isActive: createUserDto.isActive,
+      roles: createUserDto.roles || ['EMPLOYEE'],
       ...(createUserDto.employeeId && {
         employee: { connect: { id: createUserDto.employeeId } }
       }),
@@ -27,6 +26,9 @@ export class UserService {
     try {
       return await this.repository.create(userData);
     } catch (error) {
+      if (error.code === 'P2002') {
+        throw new Error('Username or email already exists');
+      }
       throw new Error(`Failed to create user: ${error.message}`);
     }
   }
@@ -38,7 +40,6 @@ export class UserService {
       throw new Error(`Failed to retrieve users: ${error.message}`);
     }
   }
-
 
   async findOne(id: number) {
     const user = await this.repository.findById(id);
@@ -64,21 +65,16 @@ export class UserService {
       ...(updateUserDto.password && {
         password: await bcrypt.hash(updateUserDto.password, 10)
       }),
+      ...(updateUserDto.roles && { roles: updateUserDto.roles }),
     };
 
     try {
       return await this.repository.update(id, data);
     } catch (error) {
+      if (error.code === 'P2002') {
+        throw new Error('Username or email already exists');
+      }
       throw new Error(`Failed to update user: ${error.message}`);
-    }
-  }
-
-  async assignRoles(id: number, assignRoleDto: AssignRoleDto) {
-    await this.findOne(id); // Verify user exists
-    try {
-      return await this.repository.assignRoles(id, assignRoleDto.roleIds);
-    } catch (error) {
-      throw new Error(`Failed to assign roles: ${error.message}`);
     }
   }
 }

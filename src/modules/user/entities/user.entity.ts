@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Employee } from 'src/modules/employee/entities/employee.entity';
-import { Role } from 'src/modules/role/entities/role.entity';
+import { Role } from '@prisma/client';
 
 export class User {
     @ApiProperty({ example: 1, description: 'Unique identifier for the user' })
@@ -12,11 +12,16 @@ export class User {
     @ApiProperty({ example: 'john.doe@example.com', description: 'User email address' })
     email: string;
 
+    @ApiProperty({
+        example: ['EMPLOYEE'],
+        description: 'User roles',
+        enum: Role,
+        isArray: true
+    })
+    roles: Role[];
+
     @ApiProperty({ type: () => Employee, required: false, description: 'Associated employee details' })
     employee?: Employee;
-
-    @ApiProperty({ type: () => [Role], description: 'Roles assigned to the user' })
-    roles: Role[];
 
     @ApiProperty({ example: true, description: 'User active status' })
     isActive: boolean;

@@ -7,9 +7,9 @@ import { DepartmentModule } from "./modules/department/department.module";
 import { PositionsModule } from "./modules/position/position.module";
 import { EmployeesModule } from "./modules/employee/employee.module";
 import { UserModule } from "./modules/user/user.module";
-import { RoleModule } from "./modules/role/role.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { AuthModule } from "./modules/auth/auth.module";
 
 
 
@@ -24,13 +24,13 @@ import { AppService } from "./app.service";
       ttl: 60,      // Reset counter after 60 seconds
       limit: 100,   // Allow 100 requests per IP in 60s
     }]),
+    AuthModule,
     LoggerModule,
     HealthModule,
     DepartmentModule,
     PositionsModule,
     EmployeesModule,
-    // UserModule,
-    // RoleModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

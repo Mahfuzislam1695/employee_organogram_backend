@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'MANAGER', 'EMPLOYEE', 'HR', 'FINANCE', 'IT', 'GUEST');
+
 -- CreateTable
 CREATE TABLE "employees" (
     "id" SERIAL NOT NULL,
@@ -58,24 +61,13 @@ CREATE TABLE "User" (
     "password" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
     "employeeId" INTEGER,
+    "roles" "Role"[] DEFAULT ARRAY['EMPLOYEE']::"Role"[],
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "lastLogin" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Role" (
-    "id" SERIAL NOT NULL,
-    "name" VARCHAR(50) NOT NULL,
-    "description" TEXT,
-    "permissions" JSONB,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -107,14 +99,6 @@ CREATE TABLE "ApiToken" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ApiToken_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "_RoleToUser" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
-
-    CONSTRAINT "_RoleToUser_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -187,9 +171,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE INDEX "User_employeeId_idx" ON "User"("employeeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
-
--- CreateIndex
 CREATE INDEX "AuditLog_action_idx" ON "AuditLog"("action");
 
 -- CreateIndex
@@ -212,9 +193,6 @@ CREATE INDEX "ApiToken_expiresAt_idx" ON "ApiToken"("expiresAt");
 
 -- CreateIndex
 CREATE INDEX "ApiToken_isActive_idx" ON "ApiToken"("isActive");
-
--- CreateIndex
-CREATE INDEX "_RoleToUser_B_index" ON "_RoleToUser"("B");
 
 -- AddForeignKey
 ALTER TABLE "employees" ADD CONSTRAINT "employees_positionId_fkey" FOREIGN KEY ("positionId") REFERENCES "positions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -239,9 +217,3 @@ ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userI
 
 -- AddForeignKey
 ALTER TABLE "ApiToken" ADD CONSTRAINT "ApiToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_RoleToUser" ADD CONSTRAINT "_RoleToUser_A_fkey" FOREIGN KEY ("A") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "_RoleToUser" ADD CONSTRAINT "_RoleToUser_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

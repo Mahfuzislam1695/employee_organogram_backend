@@ -73,11 +73,13 @@ async function bootstrap() {
       },
       'JWT-auth',
     )
-    .addCookieAuth('refreshToken')
-    .addTag('System', "system health")
-    .addTag('Departments', 'Department for managing  and their related information.')
-    .addTag('Positions', 'Positions for managing  and their related information.')
-    .addTag('')
+    .addTag('System', 'System health and status endpoints')
+    .addTag('Authentication', 'User authentication and authorization')
+    .addTag('Users', 'User management endpoints')
+    .addTag('Departments', 'Department management and related operations')
+    .addTag('Positions', 'Position management and hierarchy operations')
+    .addTag('Employees', 'Employee management and organizational structure')
+    .addTag('Audit', 'System audit logs and tracking')
 
     .build();
 
