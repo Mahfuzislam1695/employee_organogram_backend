@@ -7,16 +7,61 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { AssignManagerDto } from './dto/assign-manager.dto';
 import { SubordinatesQueryDto } from './dto/subordinates-query.dto';
 import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class EmployeeService {
-  constructor(private readonly repository: EmployeeRepository) { }
+  constructor(private readonly repository: EmployeeRepository,
+    private readonly prisma: PrismaService,
+  ) { }
 
   async create(createEmployeeDto: CreateEmployeeDto) {
     try {
-      // Convert DTO to Prisma input type
+      // Check if employeeId already exists
+      const existingEmployee = await this.prisma.employee.findUnique({
+        where: { employeeId: createEmployeeDto.employeeId }
+      });
+
+      if (existingEmployee) {
+        throw new Error(`Employee with ID ${createEmployeeDto.employeeId} already exists`);
+      }
+
+      // Check if position exists
+      const positionExists = await this.prisma.position.findUnique({
+        where: { id: createEmployeeDto.positionId }
+      });
+      if (!positionExists) {
+        throw new Error(`Position with ID ${createEmployeeDto.positionId} not found`);
+      }
+
+      // Check if department exists (if provided)
+      if (createEmployeeDto.departmentId) {
+        const departmentExists = await this.prisma.department.findUnique({
+          where: { id: createEmployeeDto.departmentId }
+        });
+        if (!departmentExists) {
+          throw new Error(`Department with ID ${createEmployeeDto.departmentId} not found`);
+        }
+      }
+
+      // Check if manager exists (if provided)
+      if (createEmployeeDto.managerId) {
+        const managerExists = await this.prisma.employee.findUnique({
+          where: { id: createEmployeeDto.managerId }
+        });
+        if (!managerExists) {
+          throw new Error(`Manager with ID ${createEmployeeDto.managerId} not found`);
+        }
+      }
+
+      // Transform DTO to Prisma input
       const employeeData: Prisma.EmployeeCreateInput = {
-        ...createEmployeeDto,
+        employeeId: createEmployeeDto.employeeId,
+        firstName: createEmployeeDto.firstName,
+        lastName: createEmployeeDto.lastName,
+        email: createEmployeeDto.email,
+        phone: createEmployeeDto.phone,
+        isActive: createEmployeeDto.isActive,
         fullName: `${createEmployeeDto.firstName} ${createEmployeeDto.lastName}`,
         position: { connect: { id: createEmployeeDto.positionId } },
         ...(createEmployeeDto.managerId && {
@@ -25,13 +70,24 @@ export class EmployeeService {
         ...(createEmployeeDto.departmentId && {
           department: { connect: { id: createEmployeeDto.departmentId } }
         }),
-        path: '', // Will be updated when assigning manager
-        hierarchyLevel: 1, // Default level
+        path: '',
+        hierarchyLevel: 1,
       };
 
-      return await this.repository.create(employeeData);
+      // Remove any undefined values
+      const cleanEmployeeData = Object.fromEntries(
+        Object.entries(employeeData).filter(([_, v]) => v !== undefined)
+      ) as Prisma.EmployeeCreateInput;
+
+      return await this.repository.create(cleanEmployeeData);
     } catch (error) {
-      throw new Error(`Failed to create employee: ${error.message}`);
+      // Handle Prisma specific errors
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          throw new Error('Employee with this ID already exists');
+        }
+      }
+      throw new Error(error.message);
     }
   }
 

@@ -9,7 +9,9 @@ import { UserModule } from '../user/user.module';
 
 
 @Module({
-  imports: [DepartmentModule, PositionsModule, UserModule],
+  imports: [DepartmentModule, PositionsModule],
+  // imports: [DepartmentModule, PositionsModule, UserModule],
+
   controllers: [EmployeeController],
   providers: [EmployeeService, EmployeeRepository, PrismaService],
   exports: [EmployeeService],

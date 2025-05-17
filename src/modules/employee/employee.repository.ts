@@ -32,7 +32,11 @@ export class EmployeeRepository {
     async create(data: Prisma.EmployeeCreateInput) {
         try {
             return await this.prisma.employee.create({
-                data,
+                data: {
+                    ...data,
+                    // Ensure no undefined values are passed
+                    phone: data.phone || null, // Handle optional fields
+                },
                 include: this.includeRelations(),
             });
         } catch (error) {

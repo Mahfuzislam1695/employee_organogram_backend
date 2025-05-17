@@ -28,7 +28,7 @@ import { AppService } from "./app.service";
     HealthModule,
     DepartmentModule,
     PositionsModule,
-    // EmployeesModule,
+    EmployeesModule,
     // UserModule,
     // RoleModule,
   ],
