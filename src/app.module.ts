@@ -9,6 +9,7 @@ import { EmployeesModule } from "./modules/employee/employee.module";
 import { UserModule } from "./modules/user/user.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { JwtService } from "@nestjs/jwt";
 import { AuthModule } from "./modules/auth/auth.module";
 
 
@@ -24,13 +25,13 @@ import { AuthModule } from "./modules/auth/auth.module";
       ttl: 60,      // Reset counter after 60 seconds
       limit: 100,   // Allow 100 requests per IP in 60s
     }]),
-    AuthModule,
     LoggerModule,
     HealthModule,
     DepartmentModule,
     PositionsModule,
     EmployeesModule,
     UserModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
