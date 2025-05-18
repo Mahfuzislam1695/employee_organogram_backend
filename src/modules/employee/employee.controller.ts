@@ -311,11 +311,11 @@ export class EmployeeController {
   @ApiResponse({ status: 200, type: [Employee] })
   async findAll(
     @Query() pagination: PaginationParamsDto,
-    @Query() query: EmployeeQueryDto,
+    // @Query() query: EmployeeQueryDto,
     @Res() res: Response,
   ) {
     try {
-      const { employees, total } = await this.service.findAll(pagination, query);
+      const { employees, total } = await this.service.findAll(pagination);
       sendResponse(res, {
         statusCode: HttpStatus.OK,
         success: true,

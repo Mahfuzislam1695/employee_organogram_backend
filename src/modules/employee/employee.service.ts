@@ -8,6 +8,7 @@ import { AssignManagerDto } from './dto/assign-manager.dto';
 import { SubordinatesQueryDto } from './dto/subordinates-query.dto';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { classToPlain } from 'class-transformer';
 
 @Injectable()
 export class EmployeeService {
@@ -104,7 +105,7 @@ export class EmployeeService {
           subordinates: query.includeSubordinates,
           department: query.includeDepartment,
           position: query.includePosition,
-          user: true,
+          // user: true,
         },
       });
     } catch (error) {
@@ -122,6 +123,11 @@ export class EmployeeService {
     });
     if (!employee) {
       throw new NotFoundException(`Employee with ID ${id} not found`);
+    }
+
+    // Set password to undefined in the user object if it exists
+    if (employee.user && 'password' in employee.user) {
+      employee.user.password = undefined;
     }
     return employee;
   }

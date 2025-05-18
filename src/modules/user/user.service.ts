@@ -35,7 +35,11 @@ export class UserService {
 
   async findAll() {
     try {
-      return await this.repository.findAll();
+      const users = await this.repository.findAll();
+      return users.map(user => {
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
     } catch (error) {
       throw new Error(`Failed to retrieve users: ${error.message}`);
     }
@@ -46,7 +50,9 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    return user;
+
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async findByEmail(email: string) {
@@ -54,7 +60,9 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }
-    return user;
+
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

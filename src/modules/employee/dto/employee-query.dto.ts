@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class EmployeeQueryDto {
     @ApiPropertyOptional({
@@ -8,6 +9,7 @@ export class EmployeeQueryDto {
     })
     @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true')
     includeManager?: boolean;
 
     @ApiPropertyOptional({
@@ -16,6 +18,7 @@ export class EmployeeQueryDto {
     })
     @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true')
     includeSubordinates?: boolean;
 
     @ApiPropertyOptional({
@@ -24,6 +27,7 @@ export class EmployeeQueryDto {
     })
     @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true')
     includeDepartment?: boolean;
 
     @ApiPropertyOptional({
@@ -32,5 +36,6 @@ export class EmployeeQueryDto {
     })
     @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true')
     includePosition?: boolean;
 }

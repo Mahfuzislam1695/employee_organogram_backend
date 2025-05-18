@@ -56,11 +56,11 @@ export class PositionController {
   @ApiResponse({ status: 200, type: [Position] })
   async findAll(
     @Query() pagination: PaginationParamsDto,
-    @Query() query: PositionQueryDto,
+    // @Query() query: PositionQueryDto,
     @Res() res: Response,
   ) {
     try {
-      const { positions, total } = await this.service.findAll(pagination, query);
+      const { positions, total } = await this.service.findAll(pagination);
       sendResponse(res, {
         statusCode: HttpStatus.OK,
         success: true,

@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class SubordinatesQueryDto {
     @ApiPropertyOptional({
@@ -9,6 +10,7 @@ export class SubordinatesQueryDto {
     })
     @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true') // Convert string to boolean
     recursive?: boolean = true;
 
     @ApiPropertyOptional({
@@ -17,5 +19,6 @@ export class SubordinatesQueryDto {
     })
     @IsBoolean()
     @IsOptional()
+    @Transform(({ value }) => value === 'true') // Convert string to boolean
     includePosition?: boolean;
 }

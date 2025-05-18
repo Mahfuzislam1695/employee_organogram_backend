@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Employee } from 'src/modules/employee/entities/employee.entity';
 import { Role } from '@prisma/client';
+import { Exclude } from 'class-transformer';
 
 export class User {
     @ApiProperty({ example: 1, description: 'Unique identifier for the user' })
@@ -11,6 +12,10 @@ export class User {
 
     @ApiProperty({ example: 'john.doe@example.com', description: 'User email address' })
     email: string;
+
+    @Exclude() // This will remove the field from responses
+    password: string;
+
 
     @ApiProperty({
         example: ['EMPLOYEE'],
